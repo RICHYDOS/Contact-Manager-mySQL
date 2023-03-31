@@ -52,14 +52,52 @@ export const registerUser = asyncHandler(async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await createUser(username, email, hashedPassword);
-    console.log(newUser);
-    
+
     if (newUser){
-        res.status(201).send(newUser);
+        const result = {user_id: newUser.id, user_email: newUser.email};
+        res.status(201).send(result);
     }
     else{
         res.status(400);
         throw new Error("Invalid Data");
     }
     
+});
+
+export const loginUser = asyncHandler(async (req, res) => {
+    const {email, password} = req.body;
+    if (!email || !password){
+        res.status(400);
+        throw new Error("All Fields are Mandatory");
+    }
+
+    const user = await getUserByEmail(email);
+    if (user) {
+        res.status(400);
+        throw new Error("User Already Exists");
+    }
+    // Compare client password with db password
+    if (user && (bcrypt.compare(password, user.password))){
+        const accessToken = jwt.sign(
+            //Payload
+            {
+                user: {
+                username: user.username,
+                email: user.email,
+                id: user.id
+                },
+            },
+            //Access Token Secret Key
+            process.env.ACCESSTOKENSECRET,
+            // Options like token expiry
+            {expiresIn: "15m"}
+        );
+
+        res.status(200).send({access_token: accessToken});
+    }
+    else{
+        res.status(401);
+        throw new Error("Email or Password are invalid");
+    }
+
 });
