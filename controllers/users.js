@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import {mysqlPool} from "../index.js";
 dotenv.config();
 
-
+// MySQL QUERIES
 
 async function getUserById(id) {
     const [rows] = await mysqlPool.query(`
@@ -34,6 +34,8 @@ async function createUser(username, email, password) {
     return getUserById(id);
 }
 
+// CONTROLLERS
+
 //@desc: Register a User
 //@route: POST /api/users/register
 //@access: Public
@@ -48,7 +50,6 @@ export const registerUser = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("User Already Exists");
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await createUser(username, email, hashedPassword);
@@ -72,10 +73,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     }
 
     const user = await getUserByEmail(email);
-    if (user) {
-        res.status(400);
-        throw new Error("User Already Exists");
-    }
+ 
     // Compare client password with db password
     if (user && (bcrypt.compare(password, user.password))){
         const accessToken = jwt.sign(
