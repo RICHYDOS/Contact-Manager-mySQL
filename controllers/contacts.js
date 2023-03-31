@@ -5,11 +5,11 @@ import {mysqlPool} from "../index.js";
 
 async function getAllContacts(id) {
     const [rows] = await mysqlPool.query(`
-    SELECT * 
+    SELECT id, name, email, phone 
     FROM contacts
     WHERE user_id = ?`
     , [id]);
-    return rows[0];
+    return rows;
 }
 
 async function getContact(id) {
@@ -53,9 +53,10 @@ export const createContact = asyncHandler(async (req, res) => {
         throw new Error("All Fields are Mandatory");
     }
     const contact = await createAContact(name, email, phone, req.user.id);
-    
+
     if (contact){
-        res.status(201).send(contact);
+        const result = {id: contact.id, name: contact.name, email: contact.email, phone: contact.phone}
+        res.status(201).send(result);
     }
     else{
         res.status(400);
