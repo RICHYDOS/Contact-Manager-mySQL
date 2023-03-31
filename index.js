@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import mysql2 from "mysql2";
 import users from "./routes/users.js";
+import contacts from "./routes/contacts.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 dotenv.config();
@@ -22,6 +23,7 @@ const port = process.env.PORT || 5000;
 // This provides a parser that allows us to parse the data received from the client side
 app.use(express.json());
 app.use("/api/users", users);
+app.use("/api/contacts", contacts);
 app.use(errorHandler);
 
 app.listen(port, () => {
