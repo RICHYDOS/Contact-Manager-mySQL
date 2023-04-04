@@ -2,37 +2,8 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { mysqlPool } from "../index.js";
+import {getUserByEmail, createUser} from "../database.js";
 dotenv.config();
-
-// MySQL QUERIES
-
-async function getUserById(id) {
-    const [rows] = await mysqlPool.query(`
-    SELECT * 
-    FROM users
-    WHERE id = ?`
-        , [id]);
-    return rows[0];
-}
-
-async function getUserByEmail(email) {
-    const [rows] = await mysqlPool.query(`
-    SELECT * 
-    FROM users
-    WHERE email = ?`
-        , [email]);
-    return rows[0];
-}
-
-async function createUser(username, email, password) {
-    const [result] = await mysqlPool.query(`
-    INSERT INTO users (username, email, password) 
-    VALUES (?, ?, ?)
-    `, [username, email, password]);
-    const id = result.insertId;
-    return getUserById(id);
-}
 
 // CONTROLLERS
 

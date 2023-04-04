@@ -1,65 +1,15 @@
 import mysql2 from "mysql2";
 import dotenv from "dotenv";
+import { mysqlPool } from "./index.js";
 
 dotenv.config();
 
-const pool = mysql2.createPool({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE
-}).promise();
+// MySQL QUERIES
 
-const result = await pool.query(`
-UPDATE contacts
-SET
-    name = ?, 
-    email = ?, 
-    phone = ?
-WHERE id = ?
-`, ["Rachael", "Jacob@gmail.com", "08023226539", 2]);
+// USERS QUERIES
 
-const rows = result[0];
-console.log(result);
-
-async function getNotes() {
-    const [rows] = await pool.query("SELECT * FROM contact");
-    return rows
-}
-
-async function getUsers() {
-    const [rows] = await pool.query("SELECT * FROM users");
-    return rows
-}
-
-async function createUser(username, email, password) {
-    const [result] = await pool.query(`
-    INSERT INTO users (username, email, password) 
-    VALUES (?, ?, ?)
-    `, [username, email, password]);
-    const id = result.insertId;
-    return getUserById(id);
-}
-
-async function getNote(id) {
-    const [rows] = await pool.query(`
-    SELECT * 
-    FROM contact
-    WHERE id = ?`
-        , [id]);
-    return rows[0];
-}
-
-async function getUserById(id) {
-    const [rows] = await pool.query(`
-    SELECT * 
-    FROM users
-    WHERE id = ?`
-        , [id]);
-    return rows[0];
-}
-async function getUserByEmail(email) {
-    const [rows] = await pool.query(`
+export async function getUserByEmail(email) {
+    const [rows] = await mysqlPool.query(`
     SELECT * 
     FROM users
     WHERE email = ?`
@@ -67,3 +17,62 @@ async function getUserByEmail(email) {
     return rows[0];
 }
 
+export async function createUser(username, email, password) {
+    const [result] = await mysqlPool.query(`
+    INSERT INTO users (username, email, password) 
+    VALUES (?, ?, ?)
+    `, [username, email, password]);
+    const id = result.insertId;
+    return getUserById(id);
+}
+
+
+// CONTACTS QUERIES
+
+export async function getAllContacts(id) {
+    const [rows] = await mysqlPool.query(`
+    SELECT id, name, email, phone 
+    FROM contacts
+    WHERE user_id = ?`
+        , [id]);
+    return rows;
+}
+
+export async function getContact(id) {
+    const [rows] = await mysqlPool.query(`
+    SELECT * 
+    FROM contacts
+    WHERE id = ?`
+        , [id]);
+    return rows[0];
+}
+
+export async function createAContact(name, email, phone, user_id) {
+    const [result] = await mysqlPool.query(`
+    INSERT INTO contacts (name, email, phone, user_id) 
+    VALUES (?, ?, ?, ?)
+    `, [name, email, phone, user_id]);
+    const id = result.insertId;
+    return getContact(id);
+}
+
+export async function changeContact(name, email, phone, id) {
+    const [result] = await mysqlPool.query(`
+    UPDATE contacts
+    SET
+        name = ?, 
+        email = ?, 
+        phone = ?
+    WHERE id = ?
+    `, [name, email, phone, id]);
+    return getContact(id);
+}
+
+export async function deleteAContact(id) {
+    const [result] = await mysqlPool.query(`
+    DELETE FROM contacts 
+    WHERE id = ?
+    `, [id]);
+
+    return result;
+}

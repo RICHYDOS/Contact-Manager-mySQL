@@ -1,55 +1,5 @@
 import asyncHandler from "express-async-handler";
-import { mysqlPool } from "../index.js";
-
-//MYSQL QUERIES
-
-async function getAllContacts(id) {
-    const [rows] = await mysqlPool.query(`
-    SELECT id, name, email, phone 
-    FROM contacts
-    WHERE user_id = ?`
-        , [id]);
-    return rows;
-}
-
-async function getContact(id) {
-    const [rows] = await mysqlPool.query(`
-    SELECT * 
-    FROM contacts
-    WHERE id = ?`
-        , [id]);
-    return rows[0];
-}
-
-async function createAContact(name, email, phone, user_id) {
-    const [result] = await mysqlPool.query(`
-    INSERT INTO contacts (name, email, phone, user_id) 
-    VALUES (?, ?, ?, ?)
-    `, [name, email, phone, user_id]);
-    const id = result.insertId;
-    return getContact(id);
-}
-
-async function changeContact(name, email, phone, id) {
-    const [result] = await mysqlPool.query(`
-    UPDATE contacts
-    SET
-        name = ?, 
-        email = ?, 
-        phone = ?
-    WHERE id = ?
-    `, [name, email, phone, id]);
-    return getContact(id);
-}
-
-async function deleteAContact(id) {
-    const [result] = await mysqlPool.query(`
-    DELETE FROM contacts 
-    WHERE id = ?
-    `, [id]);
-
-    return result;
-}
+import {getAllContacts, getContact, createAContact, changeContact, deleteAContact} from "../database.js";
 
 // Controllers
 
