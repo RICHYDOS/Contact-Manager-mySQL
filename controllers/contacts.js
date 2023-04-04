@@ -29,6 +29,18 @@ async function createAContact(name, email, phone, user_id) {
     const id = result.insertId;
     return getContact(id);
 }
+
+async function changeContact(name, email, phone, id) {
+    const [result] = await mysqlPool.query(`
+    UPDATE contacts
+    SET
+        name = ?, 
+        email = ?, 
+        phone = ?
+    WHERE id = ?
+    `, [name, email, phone, id]);
+    return getContact(id);
+}
 // Controllers
 
 //@desc: Get all contacts
@@ -72,7 +84,7 @@ export const oneContact = asyncHandler(async (req, res) => {
 
     if (contact.user_id !== req.user.id) {
         res.status(403);
-        throw new Error("User doesn't have permission to update other user contacts");
+        throw new Error("User doesn't have permission to view other user contacts");
     }
 
     if (!contact) {
@@ -89,19 +101,21 @@ export const oneContact = asyncHandler(async (req, res) => {
 export const updateContact = asyncHandler(async (req, res) => {
     const contact = await getContact(req.params.id);
 
+    if (contact.user_id !== req.user.id) {
+        res.status(403);
+        throw new Error("User doesn't have permission to update other user contacts");
+    }
+
     if (!contact) {
         res.status(404);
         throw new Error("Contact not Found");
     }
 
-    if (contact.user_id !== req.user.id) {
-        res.status(403);
-        throw new Error("User doesn't have permission to update other user contacts");
-    }
-    const updatedContact = await Contact.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true }
-    );
+    const name = req.body.name || contact.name;
+    const email = req.body.email || contact.email;
+    const phone = req.body.phone || contact.phone;
+
+    const updatedContact = await changeContact(name, email, phone, req.params.id);
+
     res.status(200).send(updatedContact);
 });

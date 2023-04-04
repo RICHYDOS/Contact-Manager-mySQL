@@ -10,10 +10,17 @@ const pool = mysql2.createPool({
     database: process.env.MYSQL_DATABASE
 }).promise();
 
-const result = await pool.query("SELECT * FROM contacts");
-const rows = result[0];
-console.log(rows);
+const result = await pool.query(`
+UPDATE contacts
+SET
+    name = ?, 
+    email = ?, 
+    phone = ?
+WHERE id = ?
+`, ["Rachael", "Jacob@gmail.com", "08023226539", 2]);
 
+const rows = result[0];
+console.log(result);
 
 async function getNotes() {
     const [rows] = await pool.query("SELECT * FROM contact");
