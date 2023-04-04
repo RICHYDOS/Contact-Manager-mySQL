@@ -11,7 +11,6 @@ export const auth = asyncHandler(async (req, res, next) => {
             throw new Error("User is not Authorized");
         }
         req.user = decoded.user;
-        console.log(req.user);
         next();
     });
     if (!token){

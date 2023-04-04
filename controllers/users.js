@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import {mysqlPool} from "../index.js";
+import { mysqlPool } from "../index.js";
 dotenv.config();
 
 // MySQL QUERIES
@@ -12,7 +12,7 @@ async function getUserById(id) {
     SELECT * 
     FROM users
     WHERE id = ?`
-    , [id]);
+        , [id]);
     return rows[0];
 }
 
@@ -21,7 +21,7 @@ async function getUserByEmail(email) {
     SELECT * 
     FROM users
     WHERE email = ?`
-    , [email]);
+        , [email]);
     return rows[0];
 }
 
@@ -40,8 +40,8 @@ async function createUser(username, email, password) {
 //@route: POST /api/users/register
 //@access: Public
 export const registerUser = asyncHandler(async (req, res) => {
-    const {username, email, password} = req.body;
-    if (!username || !email || !password){
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
         res.status(400);
         throw new Error("All Fields are Mandatory");
     }
@@ -54,46 +54,46 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     const newUser = await createUser(username, email, hashedPassword);
 
-    if (newUser){
-        const result = {user_id: newUser.id, user_email: newUser.email};
+    if (newUser) {
+        const result = { user_id: newUser.id, user_email: newUser.email };
         res.status(201).send(result);
     }
-    else{
+    else {
         res.status(400);
         throw new Error("Invalid Data");
     }
-    
+
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
-    const {email, password} = req.body;
-    if (!email || !password){
+    const { email, password } = req.body;
+    if (!email || !password) {
         res.status(400);
         throw new Error("All Fields are Mandatory");
     }
 
     const user = await getUserByEmail(email);
- 
+
     // Compare client password with db password
-    if (user && (bcrypt.compare(password, user.password))){
+    if (user && (bcrypt.compare(password, user.password))) {
         const accessToken = jwt.sign(
             //Payload
             {
                 user: {
-                username: user.username,
-                email: user.email,
-                id: user.id
+                    username: user.username,
+                    email: user.email,
+                    id: user.id
                 },
             },
             //Access Token Secret Key
             process.env.ACCESSTOKENSECRET,
             // Options like token expiry
-            {expiresIn: "15m"}
+            { expiresIn: "4h" }
         );
 
-        res.status(200).send({access_token: accessToken});
+        res.status(200).send({ access_token: accessToken });
     }
-    else{
+    else {
         res.status(401);
         throw new Error("Email or Password are invalid");
     }
