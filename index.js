@@ -8,7 +8,7 @@ import { errorHandler } from "./middleware/errorHandler.js";
 dotenv.config();
 const app = express();
 
-export const mysqlPool  = mysql2.createPool({
+export const mysqlPool = mysql2.createPool({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,

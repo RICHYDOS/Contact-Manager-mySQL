@@ -3,18 +3,17 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const pool  = mysql2.createPool({
+const pool = mysql2.createPool({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE
 }).promise();
 
-// const result = await pool.query("SELECT * FROM contact manager");
-// const rows = result[0];
-// console.log(rows);
+const result = await pool.query("SELECT * FROM contacts");
+const rows = result[0];
+console.log(rows);
 
-// All of that is the same as
 
 async function getNotes() {
     const [rows] = await pool.query("SELECT * FROM contact");
@@ -40,7 +39,7 @@ async function getNote(id) {
     SELECT * 
     FROM contact
     WHERE id = ?`
-    , [id]);
+        , [id]);
     return rows[0];
 }
 
@@ -49,7 +48,7 @@ async function getUserById(id) {
     SELECT * 
     FROM users
     WHERE id = ?`
-    , [id]);
+        , [id]);
     return rows[0];
 }
 async function getUserByEmail(email) {
@@ -57,7 +56,7 @@ async function getUserByEmail(email) {
     SELECT * 
     FROM users
     WHERE email = ?`
-    , [email]);
+        , [email]);
     return rows[0];
 }
 
