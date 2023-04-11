@@ -1,6 +1,8 @@
-import {sequelize} from "../index.js";
+import Sequelize from "sequelize";
+import {User} from "./user.js";
+const sequelize = new Sequelize(process.env.MYSQL_DATABASE, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, { dialect: "mysql" });
 
-const Contact = sequelize.define("contacts", {
+export const Contact = sequelize.define("contacts", {
     id: {
         type: Sequelize.DataTypes.INTEGER,
         primaryKey: true,
@@ -11,7 +13,8 @@ const Contact = sequelize.define("contacts", {
         references: {
             model: User,
             key: "id"
-        }
+        },
+        allowNull: false
     },
     name: {
         type: Sequelize.DataTypes.STRING,

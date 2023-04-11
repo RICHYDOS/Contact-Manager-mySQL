@@ -11,6 +11,14 @@ dotenv.config();
 //@desc: Register a User
 //@route: POST /api/users/register
 //@access: Public
+
+//@desc: Log in a User
+//@route: POST /api/users/login
+//@access: Public
+
+
+// USING RAW SQL QUERIES
+
 // export const registerUser = asyncHandler(async (req, res) => {
 //     const { username, email, password } = req.body;
 //     if (!username || !email || !password) {
@@ -36,6 +44,45 @@ dotenv.config();
 //     }
 
 // });
+
+
+// export const loginUser = asyncHandler(async (req, res) => {
+//     const { email, password } = req.body;
+//     if (!email || !password) {
+//         res.status(400);
+//         throw new Error("All Fields are Mandatory");
+//     }
+
+//     const user = await getUserByEmail(email);
+
+//     // Compare client password with db password
+//     if (user && (bcrypt.compare(password, user[0].dataValues.password))) {
+//         const accessToken = jwt.sign(
+//             //Payload
+//             {
+//                 user: {
+//                     username: user.username,
+//                     email: user.email,
+//                     id: user.id
+//                 },
+//             },
+//             //Access Token Secret Key
+//             process.env.ACCESSTOKENSECRET,
+//             // Options like token expiry
+//             { expiresIn: "4h" }
+//         );
+
+//         res.status(200).send({ access_token: accessToken });
+//     }
+//     else {
+//         res.status(401);
+//         throw new Error("Email or Password are invalid");
+//     }
+
+// });
+
+
+// USING SEQUELIZE
 
 export const registerUser = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body;
@@ -73,10 +120,11 @@ export const loginUser = asyncHandler(async (req, res) => {
         throw new Error("All Fields are Mandatory");
     }
 
-    const user = await User.findAll({ where: { email } });
-    
+    let user = await User.findAll({ where: { email } });
+
     // Compare client password with db password
     if (user && (bcrypt.compare(password, user[0].dataValues.password))) {
+        user = user[0].dataValues;
         const accessToken = jwt.sign(
             //Payload
             {
