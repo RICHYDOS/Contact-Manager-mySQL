@@ -31,4 +31,4 @@ export const Contact = sequelize.define("contacts", {
 })
 
 await Contact.sync();
-console.log("It actually worked");
+console.log("Contact Table, Check...");

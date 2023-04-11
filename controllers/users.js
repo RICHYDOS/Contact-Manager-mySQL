@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { getUserByEmail, createUser } from "../database.js";
+import { getUserByEmail, createUser } from "../mysql.js";
 import { User } from "../models/user.js";
 dotenv.config();
 
@@ -93,7 +93,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
     let user = await User.findAll({ where: { email } });
 
-    if (user) {
+    if (user[0]) {
         res.status(400);
         throw new Error("User Already Exists");
     }
@@ -123,7 +123,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     let user = await User.findAll({ where: { email } });
 
     // Compare client password with db password
-    if (user && (bcrypt.compare(password, user[0].dataValues.password))) {
+    if (user[0] && (bcrypt.compare(password, user[0].dataValues.password))) {
         user = user[0].dataValues;
         const accessToken = jwt.sign(
             //Payload

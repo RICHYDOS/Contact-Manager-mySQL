@@ -5,12 +5,12 @@ import { allContacts, createContact, deleteContact, oneContact, updateContact } 
 
 
 // A neat way to use / implement my Auth middleware on all the contacts routes
-//router.use(auth);
+router.use(auth);
 
-router.get("/", auth, allContacts)
-router.post("/", auth, createContact)
-router.get("/:id", auth, oneContact)
-router.put("/:id", auth, updateContact)
-router.delete("/:id", auth, deleteContact)
+router.get("/", allContacts)
+router.post("/", createContact)
+router.get("/:id", oneContact)
+router.put("/:id", updateContact)
+router.delete("/:id", deleteContact)
 
 export default router;

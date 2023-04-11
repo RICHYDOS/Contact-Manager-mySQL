@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler";
-import { getAllContacts, getContact, createAContact, changeContact, deleteAContact } from "../database.js";
+import { getAllContacts, getContact, createAContact, changeContact, deleteAContact } from "../mysql.js";
 import { Contact } from "../models/contact.js";
 
 // Controllers
@@ -114,6 +114,9 @@ import { Contact } from "../models/contact.js";
 
 // });
 
+
+// USING SEQUELIZE
+
 export const createContact = asyncHandler(async (req, res) => {
     const { name, email, phone } = req.body;
     if (!name || !email || !phone) {
@@ -132,14 +135,16 @@ export const createContact = asyncHandler(async (req, res) => {
     }
 });
 
+
 export const allContacts = asyncHandler(async (req, res) => {
     const contacts = await Contact.findAll({ where: { user_id: req.user.id } });
-    if (!contacts) {
+    if (!contacts[0]) {
         res.status(404);
         throw new Error("Contact not Found");
     }
     res.status(200).send(contacts);
 });
+
 
 export const oneContact = asyncHandler(async (req, res) => {
     let contact = await Contact.findAll({ where: { id: req.params.id } });
@@ -148,13 +153,9 @@ export const oneContact = asyncHandler(async (req, res) => {
     });
     if (contact.user_id !== req.user.id) {
         res.status(403);
-        throw new Error("User doesn't have permission to view other user contacts");
+        throw new Error("Unauthorised OR No Contact");
     }
 
-    if (!contact) {
-        res.status(404);
-        throw new Error("Contact not Found");
-    }
     const result = {
         id: contact.id,
         name: contact.name,
@@ -164,7 +165,14 @@ export const oneContact = asyncHandler(async (req, res) => {
     res.status(200).send(result);
 });
 
+
 export const updateContact = asyncHandler(async (req, res) => {
+    let {name, email, phone} = req.body;
+    if (!name && !email && !phone) {
+        res.status(400);
+        throw new Error("Empty Body is not Allowed");
+    }
+
     let contact = await Contact.findAll({ where: { id: req.params.id } });
     contact.forEach(element => {
         contact = element.toJSON();
@@ -172,17 +180,12 @@ export const updateContact = asyncHandler(async (req, res) => {
 
     if (contact.user_id !== req.user.id) {
         res.status(403);
-        throw new Error("User doesn't have permission to update other user contacts");
+        throw new Error("Unauthorised OR No Contact");
     }
 
-    if (!contact) {
-        res.status(404);
-        throw new Error("Contact not Found");
-    }
-
-    const name = req.body.name || contact.name;
-    const email = req.body.email || contact.email;
-    const phone = req.body.phone || contact.phone;
+    name = req.body.name || contact.name;
+    email = req.body.email || contact.email;
+    phone = req.body.phone || contact.phone;
 
     await Contact.update({ name, email, phone }, { where: { id: req.params.id } });
 
@@ -198,16 +201,10 @@ export const deleteContact = asyncHandler(async (req, res) => {
 
     if (contact.user_id !== req.user.id) {
         res.status(403);
-        throw new Error("User doesn't have permission to update other user contacts");
-    }
-
-    if (!contact) {
-        res.status(404);
-        throw new Error("Contact not Found");
+        throw new Error("Unauthorised OR No Contact");
     }
 
     await Contact.destroy({ where: { id: req.params.id } });
 
-    res.status(200).send({message: "Contact Deleted"});
-
+    res.status(200).send({ message: "Contact Deleted" });
 });

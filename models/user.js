@@ -24,4 +24,4 @@ export const User = sequelize.define("users", {
 })
 
 await User.sync();
-console.log("It actually worked");
+console.log("User Table, Check...");
