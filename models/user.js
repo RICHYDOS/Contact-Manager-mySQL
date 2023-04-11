@@ -1,19 +1,27 @@
-import mongoose from "mongoose";
+import Sequelize from "sequelize";
 
-const userSchema = new mongoose.Schema({
+const sequelize = new Sequelize(process.env.MYSQL_DATABASE, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, { dialect: "mysql" });
+
+export const User = sequelize.define("users", {
+    id: {
+        type: Sequelize.DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     username: {
-        type: String,
-        required: [true, "Please Enter the Username"]
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
     },
     email: {
-        type: String,
-        required: [true, "Please Enter the Email Address"],
-        unique: [true, "Email Address Already Taken"]
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false,
+        unique: true
     },
     password: {
-        type: String,
-        required: [true, "Please Enter the Password"]
+        type: Sequelize.DataTypes.CHAR(60),
+        allowNull: false
     }
-}, {timestamps: true});
+})
 
-export const User = mongoose.model("User", userSchema);
+await User.sync();
+console.log("It actually worked");

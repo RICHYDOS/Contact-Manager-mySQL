@@ -1,6 +1,6 @@
 import mysql2 from "mysql2";
 import dotenv from "dotenv";
-import { mysqlPool } from "./index.js";
+//import { mysqlPool } from "./index.js";
 
 dotenv.config();
 
@@ -23,7 +23,7 @@ export async function createUser(username, email, password) {
     VALUES (?, ?, ?)
     `, [username, email, password]);
     const id = result.insertId;
-    return getUserById(id);
+    return getUserByEmail(email);
 }
 
 

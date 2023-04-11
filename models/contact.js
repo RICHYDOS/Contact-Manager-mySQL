@@ -1,22 +1,31 @@
-import mongoose from "mongoose";
+import {sequelize} from "../index.js";
 
-const contactSchema = new mongoose.Schema({
+const Contact = sequelize.define("contacts", {
+    id: {
+        type: Sequelize.DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+    },
     user_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true
+        type: Sequelize.DataTypes.INTEGER,
+        references: {
+            model: User,
+            key: "id"
+        }
     },
     name: {
-        type: String,
-        required:[true, "Please add the contact name"]
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
     },
     email: {
-        type: String,
-        required:[true, "Please add the contact Email Address"]
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
     },
     phone: {
-        type: String,
-        required:[true, "Please add the contact Phone Number"]
+        type: Sequelize.DataTypes.STRING,
+        allowNull: false
     }
-}, {timestamps: true});
+})
 
-export const Contact = mongoose.model("Contact", contactSchema);
+await Contact.sync();
+console.log("It actually worked");
