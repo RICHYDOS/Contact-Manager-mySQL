@@ -1,6 +1,6 @@
 import mysql2 from "mysql2";
 import dotenv from "dotenv";
-//import { mysqlPool } from "./index.js";
+import { mysqlPool } from "./index.js";
 
 dotenv.config();
 
