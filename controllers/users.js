@@ -19,7 +19,7 @@ dotenv.config();
 
 // USING RAW SQL QUERIES
 
-// export const registerUser = asyncHandler(async (req, res) => {
+// export const registerUser = async (req, res) => {
 //     const { username, email, password } = req.body;
 //     if (!username || !email || !password) {
 //         res.status(400);
@@ -43,10 +43,10 @@ dotenv.config();
 //         throw new Error("Invalid Data");
 //     }
 
-// });
+// };
 
 
-// export const loginUser = asyncHandler(async (req, res) => {
+// export const loginUser = async (req, res) => {
 //     const { email, password } = req.body;
 //     if (!email || !password) {
 //         res.status(400);
@@ -79,12 +79,12 @@ dotenv.config();
 //         throw new Error("Email or Password are invalid");
 //     }
 
-// });
+// };
 
 
 // USING SEQUELIZE
 
-export const registerUser = asyncHandler(async (req, res) => {
+export const registerUser = async (req, res) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
         res.status(400);
@@ -111,9 +111,9 @@ export const registerUser = asyncHandler(async (req, res) => {
         throw new Error("Invalid Data");
     }
 
-});
+};
 
-export const loginUser = asyncHandler(async (req, res) => {
+export const loginUser = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
         res.status(400);
@@ -147,4 +147,4 @@ export const loginUser = asyncHandler(async (req, res) => {
         throw new Error("Email or Password are invalid");
     }
 
-});
+};

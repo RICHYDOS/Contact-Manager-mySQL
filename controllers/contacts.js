@@ -27,7 +27,7 @@ import { Contact } from "../models/contact.js";
 
 // USING RAW SQL QUERIES
 
-// export const createContact = asyncHandler(async (req, res) => {
+// export const createContact = async (req, res) => {
 //     const { name, email, phone } = req.body;
 //     if (!name || !email || !phone) {
 //         res.status(400);
@@ -43,20 +43,20 @@ import { Contact } from "../models/contact.js";
 //         res.status(400);
 //         throw new Error("Invalid Data");
 //     }
-// });
+// };
 
 
-// export const allContacts = asyncHandler(async (req, res) => {
+// export const allContacts = async (req, res) => {
 //     const contacts = await getAllContacts(req.user.id);
 //     if (!contacts[0]) {
 //         res.status(404);
 //         throw new Error("Contact not Found");
 //     }
 //     res.status(200).send(contacts);
-// });
+// };
 
 
-// export const oneContact = asyncHandler(async (req, res) => {
+// export const oneContact = async (req, res) => {
 //     const contact = await getContact(req.params.id);
 
 //     if (!contact) {
@@ -70,10 +70,10 @@ import { Contact } from "../models/contact.js";
 //     }
 
 //     res.status(200).send(contact);
-// });
+// };
 
 
-// export const updateContact = asyncHandler(async (req, res) => {
+// export const updateContact = async (req, res) => {
 //     let {name, email, phone} = req.body;
 //     if (!name && !email && !phone) {
 //         res.status(400);
@@ -99,9 +99,9 @@ import { Contact } from "../models/contact.js";
 //     const updatedContact = await changeContact(name, email, phone, req.params.id);
 
 //     res.status(200).send(updatedContact);
-// });
+// };
 
-// export const deleteContact = asyncHandler(async (req, res) => {
+// export const deleteContact = async (req, res) => {
 //     const contact = await getContact(req.params.id);
 
 //     if (!contact) {
@@ -119,12 +119,12 @@ import { Contact } from "../models/contact.js";
 //         res.status(200).send("Item has been deleted");
 //     }
 
-// });
+// };
 
 
 // USING SEQUELIZE
 
-export const createContact = asyncHandler(async (req, res) => {
+export const createContact = async (req, res) => {
     const { name, email, phone } = req.body;
     if (!name || !email || !phone) {
         res.status(400);
@@ -140,20 +140,20 @@ export const createContact = asyncHandler(async (req, res) => {
         res.status(400);
         throw new Error("Invalid Data");
     }
-});
+};
 
 
-export const allContacts = asyncHandler(async (req, res) => {
+export const allContacts = async (req, res) => {
     const contacts = await Contact.findAll({ where: { user_id: req.user.id } });
     if (!contacts[0]) {
         res.status(404);
         throw new Error("Contact not Found");
     }
     res.status(200).send(contacts);
-});
+};
 
 
-export const oneContact = asyncHandler(async (req, res) => {
+export const oneContact = async (req, res) => {
     let contact = await Contact.findAll({ where: { id: req.params.id } });
     contact.forEach(element => {
         contact = element.toJSON();
@@ -170,10 +170,10 @@ export const oneContact = asyncHandler(async (req, res) => {
         phone: contact.phone
     }
     res.status(200).send(result);
-});
+};
 
 
-export const updateContact = asyncHandler(async (req, res) => {
+export const updateContact = async (req, res) => {
     let {name, email, phone} = req.body;
     if (!name && !email && !phone) {
         res.status(400);
@@ -197,10 +197,10 @@ export const updateContact = asyncHandler(async (req, res) => {
     await Contact.update({ name, email, phone }, { where: { id: req.params.id } });
 
     res.status(200).send({ message: "Contact Updated" });
-});
+};
 
 
-export const deleteContact = asyncHandler(async (req, res) => {
+export const deleteContact = async (req, res) => {
     let contact = await Contact.findAll({ where: { id: req.params.id } });
     contact.forEach(element => {
         contact = element.toJSON();
@@ -214,4 +214,4 @@ export const deleteContact = asyncHandler(async (req, res) => {
     await Contact.destroy({ where: { id: req.params.id } });
 
     res.status(200).send({ message: "Contact Deleted" });
-});
+};
