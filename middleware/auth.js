@@ -5,6 +5,10 @@ dotenv.config();
 
 export const auth = asyncHandler(async (req, res, next) => {
     const token = req.header("auth-token");
+    if (!token){
+        res.status(401);
+        throw new Error("User is not Authorized or Token is missing ");
+    }
     jwt.verify(token, process.env.ACCESSTOKENSECRET, (err, decoded) => {
         if (err){
             res.status(401);
@@ -13,8 +17,4 @@ export const auth = asyncHandler(async (req, res, next) => {
         req.user = decoded.user;
         next();
     });
-    if (!token){
-        res.status(401);
-        throw new Error("User is not Authorized or Token is missing ");
-    }
 });

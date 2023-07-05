@@ -1,31 +1,8 @@
-import asyncHandler from "express-async-handler";
-import { getAllContacts, getContact, createAContact, changeContact, deleteAContact } from "../mysql.js";
 import { Contact } from "../models/contact.js";
 
-// Controllers
-
-//@desc: Create new contact
-//@route: POST /api/contacts/
-//@access: Private
-
-//@desc: Get all contacts
-//@route: GET /api/contacts
-//@access: Private
-
-//@desc: Get one contact
-//@route: GET /api/contacts/:id
-//@access: Private
-
-//@desc: Edit a contact
-//@route: PUT /api/contacts/:id
-//@access: Private
-
-//@desc: Delete a contact
-//@route: DELETE /api/contacts/:id
-//@access: Private
-
-
 // USING RAW SQL QUERIES
+// import { getAllContacts, getContact, createAContact, changeContact, deleteAContact } from "../mysql.js";
+// Controllers
 
 // export const createContact = async (req, res) => {
 //     const { name, email, phone } = req.body;
@@ -142,16 +119,14 @@ export const createContact = async (req, res) => {
     }
 };
 
-
 export const allContacts = async (req, res) => {
     const contacts = await Contact.findAll({ where: { user_id: req.user.id } });
     if (!contacts[0]) {
         res.status(404);
-        throw new Error("Contact not Found");
+        throw new Error("Contacts not Found");
     }
     res.status(200).send(contacts);
 };
-
 
 export const oneContact = async (req, res) => {
     let contact = await Contact.findAll({ where: { id: req.params.id } });
@@ -160,7 +135,7 @@ export const oneContact = async (req, res) => {
     });
     if (contact.user_id !== req.user.id) {
         res.status(403);
-        throw new Error("Unauthorised OR No Contact");
+        throw new Error("No Contact");
     }
 
     const result = {
@@ -171,7 +146,6 @@ export const oneContact = async (req, res) => {
     }
     res.status(200).send(result);
 };
-
 
 export const updateContact = async (req, res) => {
     let {name, email, phone} = req.body;
@@ -187,7 +161,7 @@ export const updateContact = async (req, res) => {
 
     if (contact.user_id !== req.user.id) {
         res.status(403);
-        throw new Error("Unauthorised OR No Contact");
+        throw new Error("No Contact");
     }
 
     name = req.body.name || contact.name;
@@ -199,7 +173,6 @@ export const updateContact = async (req, res) => {
     res.status(200).send({ message: "Contact Updated" });
 };
 
-
 export const deleteContact = async (req, res) => {
     let contact = await Contact.findAll({ where: { id: req.params.id } });
     contact.forEach(element => {
@@ -208,9 +181,8 @@ export const deleteContact = async (req, res) => {
 
     if (contact.user_id !== req.user.id) {
         res.status(403);
-        throw new Error("Unauthorised OR No Contact");
+        throw new Error("No Contact");
     }
-
     await Contact.destroy({ where: { id: req.params.id } });
 
     res.status(200).send({ message: "Contact Deleted" });
