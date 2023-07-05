@@ -10,8 +10,10 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
+// If you decide to use RAW SQL Queries:
+// Comment the line below out
 export const sequelize = new Sequelize(process.env.MYSQL_DATABASE, process.env.MYSQL_USER, process.env.MYSQL_PASSWORD, { dialect: "mysql" });
-
+// Uncomment the lines below
 // export const mysqlPool = mysql2.createPool({
 //     host: process.env.MYSQL_HOST,
 //     user: process.env.MYSQL_USER,
