@@ -30,11 +30,11 @@ This project is a Contact-Manager Web API that allows users to register and logi
 1. Clone the repository:
    - run in your terminal
    ```
-     git clone https://github.com/RICHYDOS/Contact-Manager
+     git clone https://github.com/RICHYDOS/Contact-Manager-mySQL
    ```
 3. Change into the repository root directory
    ```
-     cd Contact-Manager
+     cd Contact-Manager-mySQL
    ```
 5. Install Dependencies
    ```
@@ -75,7 +75,7 @@ This project is a Contact-Manager Web API that allows users to register and logi
 
 ### USERS
 #### Register a new user (that's you 😁):
-- Send a `POST` request to `/api/users/register` as in `https://cm-mongo.onrender.com/api/users/register` with the following JSON body:
+- Send a `POST` request to `/api/users/register` with the following JSON body:
 ```
  {
    "username": "your-username",
