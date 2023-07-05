@@ -1,23 +1,12 @@
-import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { getUserByEmail, createUser } from "../mysql.js";
 import { User } from "../models/user.js";
 dotenv.config();
 
-// CONTROLLERS
-
-//@desc: Register a User
-//@route: POST /api/users/register
-//@access: Public
-
-//@desc: Log in a User
-//@route: POST /api/users/login
-//@access: Public
-
-
 // USING RAW SQL QUERIES
+// import { getUserByEmail, createUser } from "../mysql.js";
+// CONTROLLERS
 
 // export const registerUser = async (req, res) => {
 //     const { username, email, password } = req.body;
@@ -44,7 +33,6 @@ dotenv.config();
 //     }
 
 // };
-
 
 // export const loginUser = async (req, res) => {
 //     const { email, password } = req.body;
@@ -91,9 +79,9 @@ export const registerUser = async (req, res) => {
         throw new Error("All Fields are Mandatory");
     }
 
-    let user = await User.findAll({ where: { email } });
+    let user = await User.findOne({ where: { email } });
 
-    if (user[0]) {
+    if (user) {
         res.status(400);
         throw new Error("User Already Exists");
     }
@@ -110,7 +98,6 @@ export const registerUser = async (req, res) => {
         res.status(400);
         throw new Error("Invalid Data");
     }
-
 };
 
 export const loginUser = async (req, res) => {
@@ -119,7 +106,6 @@ export const loginUser = async (req, res) => {
         res.status(400);
         throw new Error("All Fields are Mandatory");
     }
-
     let user = await User.findAll({ where: { email } });
 
     // Compare client password with db password
@@ -139,12 +125,26 @@ export const loginUser = async (req, res) => {
             // Options like token expiry
             { expiresIn: "4h" }
         );
-
         res.status(200).send({ access_token: accessToken });
     }
     else {
         res.status(401);
         throw new Error("Email or Password are invalid");
     }
+};
 
+export const getUser = async (req, res) => {
+
+    let user = await User.findOne({ where: { id: req.params.id } });
+    if (!user) {
+        res.status(404);
+        throw new Error("User Does Not Exist");
+    }
+    else if (user.id !== req.user.id){
+        res.status(403);
+        throw new Error("User Does Not have access to view this profile");
+    }
+    else{
+        res.status(200).send(user);
+    }
 };
