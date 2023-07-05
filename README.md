@@ -8,7 +8,7 @@
 * Project Usage
 
 ## Project Description
-This project is a Contact-Manager Web API that allows users to register and login in order to create, update, and delete their phone contacts. It is built using MYSQL as the database.
+This project is a Contact-Manager Web API that allows users to register and login in order to create, update, and delete their phone contacts. It is built using MYSQL as the database. This is just a replica of the https://github.com/RICHYDOS/Contact-Manager using MYSQL instead of MongoDB
 
 ## Purpose
 - To interact with a database other than MongoDB using Javascript
